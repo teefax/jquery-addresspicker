@@ -97,7 +97,19 @@ $.widget( "ui.addresspicker", {
   },
   
   _markerMoved: function() {
-    this._updatePosition(this.gmarker.getPosition());
+    var location = this.gmarker.getPosition();
+    this._updatePosition(location);
+
+    var self = this;
+    var latlng = new google.maps.LatLng(location.lat(), location.lng());	
+	
+    this.geocoder.geocode({'latLng': latlng}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        if (results[0]) {
+          self.element.val(results[0].formatted_address);
+        }
+      } 
+    });
   },
   
   // Autocomplete source method: fill its suggests with google geocoder results
