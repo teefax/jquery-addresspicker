@@ -1,3 +1,13 @@
+= Note
+
+I've fork-ed the original repo and added a feature that I feel is useful for my current project and possibly in future projects. Just a personal preference. If you like it, get it here.
+
+Features added on top:
+- Ability to populate the address bar when the marker is moved on the map
+
+Cheers,
+Mickey
+
 = jquery-addresspicker
 
 jQuery UI widget for selecting an address.
