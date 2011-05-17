@@ -4,6 +4,7 @@ I've fork-ed the original repo and added a feature that I feel is useful for my 
 
 Features added on top:
 - Ability to populate the address bar when the marker is moved on the map
+- Ability to initialize with the address bar with default lat/lng
 
 Cheers,
 Mickey

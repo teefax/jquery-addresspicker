@@ -32,6 +32,12 @@ $.widget( "ui.addresspicker", {
 		},
 	  draggableMarker: true
 	},
+	
+	init: function() {
+	  var lat = this.lat.val();
+	  var lng = this.lng.val();
+	  this._updateInput(lat, lng);
+	},
 
 	marker: function() {
 		return this.gmarker;
@@ -99,9 +105,14 @@ $.widget( "ui.addresspicker", {
   _markerMoved: function() {
     var location = this.gmarker.getPosition();
     this._updatePosition(location);
-
-    var self = this;
-    var latlng = new google.maps.LatLng(location.lat(), location.lng());	
+	this._updateInput(location.lat(), location.lng());    
+  },
+  
+  // Update input method
+  _updateInput: function(lat, lng)
+  {
+  	var self = this;
+    var latlng = new google.maps.LatLng(lat, lng);	
 	
     this.geocoder.geocode({'latLng': latlng}, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
