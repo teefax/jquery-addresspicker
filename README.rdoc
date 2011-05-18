@@ -6,6 +6,9 @@ Features added on top:
 - Ability to populate the address bar when the marker is moved on the map
 - Ability to initialize with the address bar with default lat/lng
 
+Enhancement:
+- Auto-zoom in after an update on the position
+
 Cheers,
 Mickey
 

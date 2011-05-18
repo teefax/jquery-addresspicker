@@ -49,6 +49,7 @@ $.widget( "ui.addresspicker", {
 
   updatePosition: function() {
     this._updatePosition(this.gmarker.getPosition());
+    this.gmap.setZoom(10); 
   },
   
   reloadPosition: function() {
