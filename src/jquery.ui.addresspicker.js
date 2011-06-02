@@ -28,7 +28,8 @@ $.widget( "ui.addresspicker", {
 		  lat: false,
 		  lng: false,
 		  locality: false,
-		  country: false
+		  country: false,
+                  countryCode: false
 		},
 	  draggableMarker: true
 	},
@@ -63,10 +64,11 @@ $.widget( "ui.addresspicker", {
 			select: $.proxy(this._selectAddress, this)
 		});
 		
-		this.lat      = $(this.options.elements.lat);
-		this.lng      = $(this.options.elements.lng);
-		this.locality = $(this.options.elements.locality);
-		this.country  = $(this.options.elements.country);
+		this.lat         = $(this.options.elements.lat);
+		this.lng         = $(this.options.elements.lng);
+		this.locality    = $(this.options.elements.locality);
+		this.country     = $(this.options.elements.country);
+                this.countryCode = $(this.options.elements.countryCode);
 		if (this.options.elements.map) {
 		  this.mapElement = $(this.options.elements.map);
   		this._initMap();
@@ -113,11 +115,13 @@ $.widget( "ui.addresspicker", {
     })
   },
   
-  _findInfo: function(result, type) {
+  _findInfo: function(result, type, attr) {
+    if (typeof attr == 'undefined') { attr = 'long_name'; }
+
     for (var i = 0; i < result.address_components.length; i++) {
       var component = result.address_components[i];
       if (component.types.indexOf(type) !=-1) {
-        return component.long_name;
+        return component[attr];
       }
     }
     return false;
@@ -143,6 +147,12 @@ $.widget( "ui.addresspicker", {
     if (this.country) {
       this.country.val(this._findInfo(address, 'country'));
     }
+
+    if (this.countryCode) {
+      console.log(this.countryCode);
+      this.countryCode.val(this._findInfo(address, 'country', 'short_name'));
+    }
+
   },
   
   _selectAddress: function(event, ui) {
