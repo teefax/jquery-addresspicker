@@ -149,7 +149,6 @@ $.widget( "ui.addresspicker", {
     }
 
     if (this.countryCode) {
-      console.log(this.countryCode);
       this.countryCode.val(this._findInfo(address, 'country', 'short_name'));
     }
 
