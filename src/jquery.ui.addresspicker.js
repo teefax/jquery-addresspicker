@@ -152,7 +152,7 @@ $.widget( "ui.addresspicker", {
         return component[attr];
       }
     }
-    return false;
+    return null;
   },
 
   _focusAddress: function(event, ui) {
@@ -173,7 +173,11 @@ $.widget( "ui.addresspicker", {
       this.locality.val(this._findInfo(address, 'locality'));
     }
     if (this.address) {
-      this.address.val(this._findInfo(address, 'route') + " " + this._findInfo(address, 'street_number'));
+      street = this._findInfo(address, 'route');
+      number = this._findInfo(address, 'street_number')
+      if (street) {
+        this.address.val(street + " " + number);
+      };
     }
     if (this.zip_code) {
       this.zip_code.val(this._findInfo(address, 'postal_code'));
@@ -181,7 +185,6 @@ $.widget( "ui.addresspicker", {
     if (this.country) {
       this.country.val(this._findInfo(address, 'country'));
     }
-
     if (this.countryCode) {
       this.countryCode.val(this._findInfo(address, 'country', 'short_name'));
     }
