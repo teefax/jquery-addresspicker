@@ -32,6 +32,12 @@ $.widget( "ui.addresspicker", {
 		},
 	  draggableMarker: true
 	},
+	
+	init: function() {
+	  var lat = this.lat.val();
+	  var lng = this.lng.val();
+	  this._updateInput(lat, lng);
+	},
 
 	marker: function() {
 		return this.gmarker;
@@ -43,6 +49,7 @@ $.widget( "ui.addresspicker", {
 
   updatePosition: function() {
     this._updatePosition(this.gmarker.getPosition());
+    this.gmap.setZoom(10); 
   },
   
   reloadPosition: function() {
@@ -97,7 +104,24 @@ $.widget( "ui.addresspicker", {
   },
   
   _markerMoved: function() {
-    this._updatePosition(this.gmarker.getPosition());
+    var location = this.gmarker.getPosition();
+    this._updatePosition(location);
+	this._updateInput(location.lat(), location.lng());    
+  },
+  
+  // Update input method
+  _updateInput: function(lat, lng)
+  {
+  	var self = this;
+    var latlng = new google.maps.LatLng(lat, lng);	
+	
+    this.geocoder.geocode({'latLng': latlng}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        if (results[0]) {
+          self.element.val(results[0].formatted_address);
+        }
+      } 
+    });
   },
   
   // Autocomplete source method: fill its suggests with google geocoder results
