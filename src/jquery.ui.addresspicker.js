@@ -29,7 +29,7 @@ $.widget( "ui.addresspicker", {
       lng: false,
       locality: false,
       country: false,
-                  countryCode: false
+      countryCode: false
     },
     draggableMarker: true
   },
@@ -75,7 +75,7 @@ $.widget( "ui.addresspicker", {
     this.lng         = $(this.options.elements.lng);
     this.locality    = $(this.options.elements.locality);
     this.country     = $(this.options.elements.country);
-                this.countryCode = $(this.options.elements.countryCode);
+    this.countryCode = $(this.options.elements.countryCode);
     if (this.options.elements.map) {
       this.mapElement = $(this.options.elements.map);
       this._initMap();
@@ -108,7 +108,7 @@ $.widget( "ui.addresspicker", {
   _markerMoved: function() {
     var location = this.gmarker.getPosition();
     this._updatePosition(location);
-  this._updateInput(location.lat(), location.lng());
+    this._updateInput(location.lat(), location.lng());
   },
 
   // Update input method
