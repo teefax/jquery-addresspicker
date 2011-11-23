@@ -15,72 +15,72 @@
 (function( $, undefined ) {
 
 $.widget( "ui.addresspicker", {
-	options: {
-	  appendAddressString: "",
-		mapOptions: {
-		  zoom: 5, 
-		  center: new google.maps.LatLng(46, 2), 
-		  scrollwheel: false,
-		  mapTypeId: google.maps.MapTypeId.ROADMAP
-		},
-		elements: {
-		  map: false,
-		  lat: false,
-		  lng: false,
-		  locality: false,
-		  country: false,
+  options: {
+    appendAddressString: "",
+    mapOptions: {
+      zoom: 5,
+      center: new google.maps.LatLng(46, 2),
+      scrollwheel: false,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    },
+    elements: {
+      map: false,
+      lat: false,
+      lng: false,
+      locality: false,
+      country: false,
                   countryCode: false
-		},
-	  draggableMarker: true
-	},
-	
-	init: function() {
-	  var lat = this.lat.val();
-	  var lng = this.lng.val();
-	  this._updateInput(lat, lng);
-	},
+    },
+    draggableMarker: true
+  },
 
-	marker: function() {
-		return this.gmarker;
-	},
-	
-	map: function() {
-	  return this.gmap;
-	},
+  init: function() {
+    var lat = this.lat.val();
+    var lng = this.lng.val();
+    this._updateInput(lat, lng);
+  },
+
+  marker: function() {
+    return this.gmarker;
+  },
+
+  map: function() {
+    return this.gmap;
+  },
 
   updatePosition: function() {
     this._updatePosition(this.gmarker.getPosition());
-    this.gmap.setZoom(10); 
+    this.gmap.setZoom(10);
   },
-  
+
   reloadPosition: function() {
     this.gmarker.setVisible(true);
     this.gmarker.setPosition(new google.maps.LatLng(this.lat.val(), this.lng.val()));
     this.gmap.setCenter(this.gmarker.getPosition());
   },
-  
+
   selected: function() {
     return this.selectedResult;
   },
-  
-	_create: function() {
-	  this.geocoder = new google.maps.Geocoder();
-	  this.element.autocomplete({
-			source: $.proxy(this._geocode, this),  
-			focus:  $.proxy(this._focusAddress, this),
-			select: $.proxy(this._selectAddress, this)
-		});
-		
-		this.lat         = $(this.options.elements.lat);
-		this.lng         = $(this.options.elements.lng);
-		this.locality    = $(this.options.elements.locality);
-		this.country     = $(this.options.elements.country);
+
+  _create: function() {
+    this.geocoder = new google.maps.Geocoder();
+    this.element.autocomplete({
+      source: $.proxy(this._geocode, this),
+      focus:  $.proxy(this._focusAddress, this),
+      select: $.proxy(this._selectAddress, this)
+    });
+
+    this.lat         = $(this.options.elements.lat);
+    this.lng         = $(this.options.elements.lng);
+    this.locality    = $(this.options.elements.locality);
+    this.country     = $(this.options.elements.country);
                 this.countryCode = $(this.options.elements.countryCode);
-		if (this.options.elements.map) {
-		  this.mapElement = $(this.options.elements.map);
-  		this._initMap();
-		}
-	},
+    if (this.options.elements.map) {
+      this.mapElement = $(this.options.elements.map);
+      this._initMap();
+    }
+  },
 
   _initMap: function() {
     if (this.lat && this.lat.val()) {
@@ -89,13 +89,13 @@ $.widget( "ui.addresspicker", {
 
     this.gmap = new google.maps.Map(this.mapElement[0], this.options.mapOptions);
     this.gmarker = new google.maps.Marker({
-      position: this.options.mapOptions.center, 
-      map:this.gmap, 
+      position: this.options.mapOptions.center,
+      map:this.gmap,
       draggable: this.options.draggableMarker});
     google.maps.event.addListener(this.gmarker, 'dragend', $.proxy(this._markerMoved, this));
     this.gmarker.setVisible(false);
   },
-  
+
   _updatePosition: function(location) {
     if (this.lat) {
       this.lat.val(location.lat());
@@ -104,28 +104,28 @@ $.widget( "ui.addresspicker", {
       this.lng.val(location.lng());
     }
   },
-  
+
   _markerMoved: function() {
     var location = this.gmarker.getPosition();
     this._updatePosition(location);
-	this._updateInput(location.lat(), location.lng());    
+  this._updateInput(location.lat(), location.lng());
   },
-  
+
   // Update input method
   _updateInput: function(lat, lng)
   {
-  	var self = this;
-    var latlng = new google.maps.LatLng(lat, lng);	
-	
+    var self = this;
+    var latlng = new google.maps.LatLng(lat, lng);
+
     this.geocoder.geocode({'latLng': latlng}, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
         if (results[0]) {
           self.element.val(results[0].formatted_address);
         }
-      } 
+      }
     });
   },
-  
+
   // Autocomplete source method: fill its suggests with google geocoder results
   _geocode: function(request, response) {
     var address = request.term, self = this;
@@ -134,11 +134,11 @@ $.widget( "ui.addresspicker", {
         for (var i = 0; i < results.length; i++) {
           results[i].label =  results[i].formatted_address;
         };
-      } 
+      }
       response(results);
     })
   },
-  
+
   _findInfo: function(result, type, attr) {
     if (typeof attr == 'undefined') { attr = 'long_name'; }
 
@@ -150,13 +150,13 @@ $.widget( "ui.addresspicker", {
     }
     return false;
   },
-  
+
   _focusAddress: function(event, ui) {
     var address = ui.item;
     if (!address) {
       return;
     }
-    
+
     if (this.gmarker) {
       this.gmarker.setPosition(address.geometry.location);
       this.gmarker.setVisible(true);
@@ -164,7 +164,7 @@ $.widget( "ui.addresspicker", {
       this.gmap.fitBounds(address.geometry.viewport);
     }
     this._updatePosition(address.geometry.location);
-    
+
     if (this.locality) {
       this.locality.val(this._findInfo(address, 'locality'));
     }
@@ -177,27 +177,27 @@ $.widget( "ui.addresspicker", {
     }
 
   },
-  
+
   _selectAddress: function(event, ui) {
     this.selectedResult = ui.item;
   }
 });
 
 $.extend( $.ui.addresspicker, {
-	version: "@VERSION"
+  version: "@VERSION"
 });
 
 
 // make IE think it doesn't suck
 if(!Array.indexOf){
-	Array.prototype.indexOf = function(obj){
-		for(var i=0; i<this.length; i++){
-			if(this[i]==obj){
-				return i;
-			}
-		}
-		return -1;
-	}
+  Array.prototype.indexOf = function(obj){
+    for(var i=0; i<this.length; i++){
+      if(this[i]==obj){
+        return i;
+      }
+    }
+    return -1;
+  }
 }
 
 })( jQuery );
