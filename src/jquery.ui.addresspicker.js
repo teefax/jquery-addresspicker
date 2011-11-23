@@ -28,6 +28,8 @@ $.widget( "ui.addresspicker", {
       lat: false,
       lng: false,
       locality: false,
+      address: false,
+      zip_code: false,
       country: false,
       countryCode: false
     },
@@ -73,6 +75,8 @@ $.widget( "ui.addresspicker", {
 
     this.lat         = $(this.options.elements.lat);
     this.lng         = $(this.options.elements.lng);
+    this.address     = $(this.options.elements.address);
+    this.zip_code    = $(this.options.elements.zip_code);
     this.locality    = $(this.options.elements.locality);
     this.country     = $(this.options.elements.country);
     this.countryCode = $(this.options.elements.countryCode);
@@ -167,6 +171,12 @@ $.widget( "ui.addresspicker", {
 
     if (this.locality) {
       this.locality.val(this._findInfo(address, 'locality'));
+    }
+    if (this.address) {
+      this.address.val(this._findInfo(address, 'route') + " " + this._findInfo(address, 'street_number'));
+    }
+    if (this.zip_code) {
+      this.zip_code.val(this._findInfo(address, 'postal_code'));
     }
     if (this.country) {
       this.country.val(this._findInfo(address, 'country'));
