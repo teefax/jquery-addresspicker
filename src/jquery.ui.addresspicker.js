@@ -31,9 +31,14 @@ $.widget( "ui.addresspicker", {
       lng: false,
       locality: false,
       address: false,
-      zip_code: false,
+      postal_code: false,
       country: false,
-      countryCode: false
+      countryCode: false,
+      administrativeAreaLevel1: false,
+      administrativeAreaLevel2: false,
+      postalCode: false,
+      streetNumber: false,
+      route: false
     }
   },
 
@@ -77,10 +82,15 @@ $.widget( "ui.addresspicker", {
     this.lat         = $(this.options.elements.lat);
     this.lng         = $(this.options.elements.lng);
     this.address     = $(this.options.elements.address);
-    this.zip_code    = $(this.options.elements.zip_code);
-    this.locality    = $(this.options.elements.locality);
     this.country     = $(this.options.elements.country);
     this.countryCode = $(this.options.elements.countryCode);
+    this.locality    = $(this.options.elements.locality);
+    this.administrativeAreaLevel1 = $(this.options.elements.administrativeAreaLevel1);
+    this.administrativeAreaLevel2 = $(this.options.elements.administrativeAreaLevel2);
+    this.postalCode = $(this.options.elements.postalCode);
+    this.streetNumber = $(this.options.elements.streetNumber);
+    this.route = $(this.options.elements.route);
+
     if (this.options.elements.map) {
       this.mapElement = $(this.options.elements.map);
       this._initMap();
@@ -173,9 +183,6 @@ $.widget( "ui.addresspicker", {
     }
     this._updatePosition(address.geometry.location);
 
-    if (this.locality) {
-      this.locality.val(this._findInfo(address, 'locality'));
-    }
     if (this.address) {
       street = this._findInfo(address, 'route');
       number = this._findInfo(address, 'street_number')
@@ -183,16 +190,30 @@ $.widget( "ui.addresspicker", {
         this.address.val(street + " " + number);
       };
     }
-    if (this.zip_code) {
-      this.zip_code.val(this._findInfo(address, 'postal_code'));
-    }
     if (this.country) {
       this.country.val(this._findInfo(address, 'country'));
     }
     if (this.countryCode) {
       this.countryCode.val(this._findInfo(address, 'country', 'short_name'));
     }
-
+    if (this.locality) {
+      this.locality.val(this._findInfo(address, 'locality'));
+    }
+    if (this.administrativeAreaLevel1) {
+      this.administrativeAreaLevel1.val(this._findInfo(address, 'administrative_area_level_1'));
+    }
+    if (this.administrativeAreaLevel2) {
+      this.administrativeAreaLevel2.val(this._findInfo(address, 'administrative_area_level_2'));
+    }
+    if (this.postalCode) {
+      this.postalCode.val(this._findInfo(address, 'postal_code'));
+    }
+    if (this.streetNumber) {
+      this.streetNumber.val(this._findInfo(address, 'street_number'));
+    }
+    if (this.route) {
+      this.route.val(this._findInfo(address, 'route'));
+    }
   },
 
   _selectAddress: function(event, ui) {
