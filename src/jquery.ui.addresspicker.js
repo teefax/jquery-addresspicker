@@ -42,12 +42,6 @@ $.widget( "ui.addresspicker", {
     }
   },
 
-  init: function() {
-    var lat = this.lat.val();
-    var lng = this.lng.val();
-    this._updateInput(lat, lng);
-  },
-
   marker: function() {
     return this.gmarker;
   },
@@ -121,24 +115,25 @@ $.widget( "ui.addresspicker", {
   },
 
   _markerMoved: function() {
+    self=this;
     var location = this.gmarker.getPosition();
     this._updatePosition(location);
-    this._updateInput(location.lat(), location.lng());
+    this._reverseGeocode(function(result){
+      self._focusAddress(event, result);
+      self.element.val(result.formatted_address);
+    });
   },
 
-  // Update input method
-  _updateInput: function(lat, lng)
-  {
-    var self = this;
-    var latlng = new google.maps.LatLng(lat, lng);
+  _reverseGeocode: function(response) {
 
-    this.geocoder.geocode({'latLng': latlng}, function(results, status) {
+    this.geocoder.geocode({
+      'latLng': new google.maps.LatLng(this.lat.val(), this.lng.val())
+    }, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
-        if (results[0]) {
-          self.element.val(results[0].formatted_address);
-        }
+        response(results[0]);
       }
     });
+
   },
 
   // Autocomplete source method: fill its suggests with google geocoder results
@@ -169,13 +164,13 @@ $.widget( "ui.addresspicker", {
     return null;
   },
 
-  _focusAddress: function(event, ui) {
-    var address = ui.item;
+  _focusAddress: function(event, selectedAddress) {
+    var address = (selectedAddress.formatted_address) ? selectedAddress : selectedAddress.item;
     if (!address) {
       return;
     }
 
-    if (this.gmarker) {
+    if (this.gmarker && event) {
       this.gmarker.setPosition(address.geometry.location);
       this.gmarker.setVisible(true);
 
