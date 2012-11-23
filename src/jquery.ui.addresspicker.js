@@ -17,6 +17,8 @@
 $.widget( "ui.addresspicker", {
   options: {
     appendAddressString: "",
+    draggableMarker: true,
+    regionBias: null,
     mapOptions: {
       zoom: 5,
       center: new google.maps.LatLng(46, 2),
@@ -32,8 +34,7 @@ $.widget( "ui.addresspicker", {
       zip_code: false,
       country: false,
       countryCode: false
-    },
-    draggableMarker: true
+    }
   },
 
   init: function() {
@@ -133,7 +134,10 @@ $.widget( "ui.addresspicker", {
   // Autocomplete source method: fill its suggests with google geocoder results
   _geocode: function(request, response) {
     var address = request.term, self = this;
-    this.geocoder.geocode( { 'address': address + this.options.appendAddressString}, function(results, status) {
+    this.geocoder.geocode( {
+      'address': address + this.options.appendAddressString,
+      'region': this.options.regionBias
+    }, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
         for (var i = 0; i < results.length; i++) {
           results[i].label =  results[i].formatted_address;
