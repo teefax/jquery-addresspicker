@@ -119,7 +119,7 @@ $.widget( "ui.addresspicker", {
     var location = this.gmarker.getPosition();
     this._updatePosition(location);
     this._reverseGeocode(function(result){
-      self._focusAddress(event, result);
+      self._focusAddress(null, result);
       self.element.val(result.formatted_address);
     });
   },
