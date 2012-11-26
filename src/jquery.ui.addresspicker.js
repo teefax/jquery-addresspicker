@@ -17,6 +17,8 @@
 $.widget( "ui.addresspicker", {
   options: {
     appendAddressString: "",
+    draggableMarker: true,
+    regionBias: null,
     mapOptions: {
       zoom: 5,
       center: new google.maps.LatLng(46, 2),
@@ -29,17 +31,15 @@ $.widget( "ui.addresspicker", {
       lng: false,
       locality: false,
       address: false,
-      zip_code: false,
+      postal_code: false,
       country: false,
-      countryCode: false
-    },
-    draggableMarker: true
-  },
-
-  init: function() {
-    var lat = this.lat.val();
-    var lng = this.lng.val();
-    this._updateInput(lat, lng);
+      countryCode: false,
+      administrativeAreaLevel1: false,
+      administrativeAreaLevel2: false,
+      postalCode: false,
+      streetNumber: false,
+      route: false
+    }
   },
 
   marker: function() {
@@ -76,10 +76,15 @@ $.widget( "ui.addresspicker", {
     this.lat         = $(this.options.elements.lat);
     this.lng         = $(this.options.elements.lng);
     this.address     = $(this.options.elements.address);
-    this.zip_code    = $(this.options.elements.zip_code);
-    this.locality    = $(this.options.elements.locality);
     this.country     = $(this.options.elements.country);
     this.countryCode = $(this.options.elements.countryCode);
+    this.locality    = $(this.options.elements.locality);
+    this.administrativeAreaLevel1 = $(this.options.elements.administrativeAreaLevel1);
+    this.administrativeAreaLevel2 = $(this.options.elements.administrativeAreaLevel2);
+    this.postalCode = $(this.options.elements.postalCode);
+    this.streetNumber = $(this.options.elements.streetNumber);
+    this.route = $(this.options.elements.route);
+
     if (this.options.elements.map) {
       this.mapElement = $(this.options.elements.map);
       this._initMap();
@@ -110,30 +115,34 @@ $.widget( "ui.addresspicker", {
   },
 
   _markerMoved: function() {
+    self=this;
     var location = this.gmarker.getPosition();
     this._updatePosition(location);
-    this._updateInput(location.lat(), location.lng());
+    this._reverseGeocode(function(result){
+      self._focusAddress(event, result);
+      self.element.val(result.formatted_address);
+    });
   },
 
-  // Update input method
-  _updateInput: function(lat, lng)
-  {
-    var self = this;
-    var latlng = new google.maps.LatLng(lat, lng);
+  _reverseGeocode: function(response) {
 
-    this.geocoder.geocode({'latLng': latlng}, function(results, status) {
+    this.geocoder.geocode({
+      'latLng': new google.maps.LatLng(this.lat.val(), this.lng.val())
+    }, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
-        if (results[0]) {
-          self.element.val(results[0].formatted_address);
-        }
+        response(results[0]);
       }
     });
+
   },
 
   // Autocomplete source method: fill its suggests with google geocoder results
   _geocode: function(request, response) {
     var address = request.term, self = this;
-    this.geocoder.geocode( { 'address': address + this.options.appendAddressString}, function(results, status) {
+    this.geocoder.geocode( {
+      'address': address + this.options.appendAddressString,
+      'region': this.options.regionBias
+    }, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
         for (var i = 0; i < results.length; i++) {
           results[i].label =  results[i].formatted_address;
@@ -155,13 +164,13 @@ $.widget( "ui.addresspicker", {
     return null;
   },
 
-  _focusAddress: function(event, ui) {
-    var address = ui.item;
+  _focusAddress: function(event, selectedAddress) {
+    var address = (selectedAddress.formatted_address) ? selectedAddress : selectedAddress.item;
     if (!address) {
       return;
     }
 
-    if (this.gmarker) {
+    if (this.gmarker && event) {
       this.gmarker.setPosition(address.geometry.location);
       this.gmarker.setVisible(true);
 
@@ -169,9 +178,6 @@ $.widget( "ui.addresspicker", {
     }
     this._updatePosition(address.geometry.location);
 
-    if (this.locality) {
-      this.locality.val(this._findInfo(address, 'locality'));
-    }
     if (this.address) {
       street = this._findInfo(address, 'route');
       number = this._findInfo(address, 'street_number')
@@ -179,16 +185,30 @@ $.widget( "ui.addresspicker", {
         this.address.val(street + " " + number);
       };
     }
-    if (this.zip_code) {
-      this.zip_code.val(this._findInfo(address, 'postal_code'));
-    }
     if (this.country) {
       this.country.val(this._findInfo(address, 'country'));
     }
     if (this.countryCode) {
       this.countryCode.val(this._findInfo(address, 'country', 'short_name'));
     }
-
+    if (this.locality) {
+      this.locality.val(this._findInfo(address, 'locality'));
+    }
+    if (this.administrativeAreaLevel1) {
+      this.administrativeAreaLevel1.val(this._findInfo(address, 'administrative_area_level_1'));
+    }
+    if (this.administrativeAreaLevel2) {
+      this.administrativeAreaLevel2.val(this._findInfo(address, 'administrative_area_level_2'));
+    }
+    if (this.postalCode) {
+      this.postalCode.val(this._findInfo(address, 'postal_code'));
+    }
+    if (this.streetNumber) {
+      this.streetNumber.val(this._findInfo(address, 'street_number'));
+    }
+    if (this.route) {
+      this.route.val(this._findInfo(address, 'route'));
+    }
   },
 
   _selectAddress: function(event, ui) {

@@ -18,15 +18,20 @@
 		    map:          "#map",
 		    lat:          "#lat",
 		    lng:          "#lng",
-		    locality:     '#locality',
-                    country:      '#country',
-                    countryCode:  '#country_code'
+        country:      '#country',
+        countryCode:  '#country_code',
+        locality:     '#locality',
+        administrativeAreaLevel1: '#administrative_area_level_1',
+        administrativeAreaLevel2: '#administrative_area_level_2',
+        postalCode: '#postal_code',
+        streetNumber: '#street_number',
+        route: '#route'
 		  }
 		});
 		var gmarker = addresspickerMap.addresspicker( "marker");
 		gmarker.setVisible(true);
 		addresspickerMap.addresspicker( "updatePosition");
-		
+
 	});
 	</script>
 </head>
@@ -35,7 +40,7 @@
 
 <div class="demo">
   <h1>jquery-addresspicker demo (a jQuery UI widget)</h1>
-  
+
   <h2>Default address picker, only autocomplete.</h2>
   <p>
     Default address picker. It's just a jQuery autocomplete filled by google map geocoder suggestions.<br/>
@@ -54,11 +59,17 @@
   <div>
   	<div class='input'>
 	    <label>Address : </label> <input id="addresspicker_map" />   <br/>
+      <label>Country:            </label> <input id="country" disabled=disabled> <br/>
+      <label>Country&nbsp;Code:  </label> <input id="country_code" disabled=disabled> <br/>
 			<label>Locality:           </label> <input id="locality" disabled=disabled> <br/>
-			<label>Country:            </label> <input id="country" disabled=disabled> <br/>
-			<label>Country&nbsp;Code:  </label> <input id="country_code" disabled=disabled> <br/>
 			<label>Lat:                </label> <input id="lat" disabled=disabled> <br/>
 			<label>Lng:                </label> <input id="lng" disabled=disabled> <br/>
+      <label>Administrative Area Level 1: </label> <input id="administrative_area_level_1" disabled=disabled> <br/>
+      <label>Administrative Area Level 2: </label> <input id="administrative_area_level_2" disabled=disabled> <br/>
+      <label>Postal Code: </label> <input id="postal_code" disabled=disabled> <br/>
+      <label>Street Number: </label> <input id="street_number" disabled=disabled> <br/>
+      <label>Route: </label> <input id="route" disabled=disabled> <br/>
+
     </div>
     <div id="map"></div>
     <div id="legend">You can drag and drop the marker to the correct location</div>
